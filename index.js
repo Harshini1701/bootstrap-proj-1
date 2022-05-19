@@ -1,5 +1,9 @@
 const taskContainer = document.querySelector(".task_container");
 
+const globalstore=[];
+
+
+
 const newcard =({id,imageUrl,taskTitle,taskType,taskDescription,}) =>`<div class="col-md-6 col-lg-4" id=${id}>
 <div class="card text-center">
     <div class="card-header d-flex justify-content-end gap-2">
@@ -19,6 +23,30 @@ const newcard =({id,imageUrl,taskTitle,taskType,taskDescription,}) =>`<div class
     </div>
 </div>
 </div>`;
+
+const loadinitialtaskcards= () => {
+//access local storage
+
+const getinitialdata=localStorage.getItem("tasky");
+if(!getinitialdata) return;
+
+//covert stringified object to normal object
+
+const { cards } = JSON.parse(getinitialdata); 
+
+
+cards.map((cardobject) => {
+    const createnewcard = newcard(cardobject);
+    taskContainer.insertAdjacentHTML("beforeend",createnewcard);
+    globalstore.push(cardobject);
+});
+};
+
+
+
+
+
+
 const saveChanges = () =>{
     const taskData={
         id:`${Date.now()}`, //unique number each time
@@ -30,5 +58,8 @@ const saveChanges = () =>{
 
     const createnewcard= newcard(taskData);
     taskContainer.insertAdjacentHTML("beforeend",createnewcard);
-
+    globalstore.push(taskData);
+    
+//addd to local storage
+    localStorage.setItem("tasky",JSON.stringify({cards:globalstore}));
 };
